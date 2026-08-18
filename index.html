@@ -67,19 +67,22 @@
                         <textarea name="description" required rows="3" placeholder="फॉर्म से जुड़ी अन्य जरूरी जानकारी यहाँ लिखें..." class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                     </div>
 
+                    <!-- नया और सही फाइल अपलोड कोड 👇 -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">📂 डॉक्यूमेंट अपलोड करें (एक या एक से अधिक फाइलें चुनें) *</label>
-                        <div class="flex items-center border rounded-lg p-1 bg-gray-50">
-                            <label class="bg-blue-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-blue-700 transition flex items-center text-sm">
+                        <div class="flex items-center mt-1 p-2 bg-gray-50 border rounded-lg">
+                            <label for="fileInput" class="bg-blue-600 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-blue-700 transition shadow-sm flex items-center text-sm shrink-0">
                                 <i class="fas fa-file-upload mr-2"></i> Choose Files
-                                <input type="file" name="document" multiple required class="hidden" onchange="document.getElementById('fileName').innerText = this.files.length + ' files selected'">
                             </label>
-                            <span id="fileName" class="ml-3 text-sm text-gray-500">No file chosen</span>
+                            <input type="file" id="fileInput" name="document" multiple required class="hidden" 
+                                onchange="document.getElementById('fileName').innerText = this.files.length > 0 ? (this.files.length === 1 ? this.files[0].name : this.files.length + ' फाइलें चुनी गईं') : 'No file chosen'">
+                            <span id="fileName" class="ml-3 text-sm text-gray-600 font-medium truncate">No file chosen</span>
                         </div>
                         <p class="text-xs text-gray-500 mt-1">💡 टिप: आप गैलरी से एक साथ कई फोटो या PDF चुन सकते हैं।</p>
                     </div>
+                    <!-- खत्म -->
 
-                    <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl hover:opacity-95 transition shadow-lg flex items-center justify-center">
+                    <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl hover:opacity-95 transition shadow-lg flex items-center justify-center mt-4">
                         <i class="fas fa-paper-plane mr-2"></i> सबमिट करें (Submit)
                     </button>
                     <div id="formMessage" class="hidden text-center mt-2 font-medium"></div>
@@ -127,6 +130,7 @@
                 msg.innerHTML = '✅ आपका डेटा और डॉक्यूमेन्ट सफलतापूर्वक जमा हो गए हैं!';
                 msg.className = 'text-center mt-2 font-medium text-green-600 block';
                 form.reset();
+                document.getElementById('fileName').innerText = 'No file chosen'; // फॉर्म रीसेट होने पर नाम हटा देगा
             } else {
                 msg.innerHTML = '❌ ' + result.error;
                 msg.className = 'text-center mt-2 font-medium text-red-600 block';
