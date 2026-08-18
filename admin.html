@@ -3,168 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard ⚙️ - Hello Computer Point</title>
+    <title>Admin Dashboard 💻 - Hello Computer Point</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style> body { font-family: 'Poppins', sans-serif; background-color: #f4f6f9; } </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }
+    </style>
     <script>
+        // चेक करें कि एडमिन लॉग इन है या नहीं
         if (localStorage.getItem("isAdminLoggedIn") !== "true") {
-            window.location.href = "/admin-login.html";
+            window.location.href = "admin-login.html";
         }
     </script>
 </head>
 <body class="p-4 md:p-8 text-gray-800">
     <div class="max-w-6xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 border-b pb-4 gap-4">
-            <h1 class="text-xl md:text-2xl font-bold text-indigo-900">
-                <i class="fas fa-user-shield text-indigo-600 mr-2"></i> ⚙️ Admin Dashboard (एडमिन पैनल)
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b pb-4 gap-4">
+            <h1 class="text-2xl md:text-3xl font-bold text-indigo-900 flex items-center">
+                <i class="fas fa-user-shield text-indigo-600 mr-3"></i> Admin Dashboard (एडमिन पैनल)
             </h1>
-            <div class="space-x-2 flex flex-wrap gap-2">
-                <a href="/" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-lg font-medium text-sm transition inline-flex items-center">
-                    <i class="fas fa-home mr-1"></i> वेबसाइट देखें
-                </a>
-                <button onclick="openPassModal()" class="bg-amber-50 text-amber-600 hover:bg-amber-100 px-3 py-2 rounded-lg font-medium text-sm transition inline-flex items-center">
-                    <i class="fas fa-key mr-1"></i> पासवर्ड बदलें
+            <div class="flex space-x-3">
+                <button onclick="openPassModal()" class="bg-amber-100 text-amber-700 hover:bg-amber-200 px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm">
+                    <i class="fas fa-key mr-2"></i> पासवर्ड बदलें
                 </button>
-                <button onclick="logout()" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-lg font-medium text-sm transition inline-flex items-center">
-                    <i class="fas fa-sign-out-alt mr-1"></i> लॉगआउट
+                <button onclick="logout()" class="bg-red-100 text-red-600 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm">
+                    <i class="fas fa-sign-out-alt mr-2"></i> लॉगआउट
                 </button>
             </div>
         </div>
-        
+
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-200 text-sm rounded-lg overflow-hidden">
-                <thead class="bg-indigo-600 text-white">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                <thead class="bg-indigo-900 text-white">
                     <tr>
-                        <th class="py-3 px-4 text-left">ID</th>
-                        <th class="py-3 px-4 text-left">👤 नाम & क्वेरी</th>
-                        <th class="py-3 px-4 text-left">📱 मोबाइल</th>
-                        <th class="py-3 px-4 text-left">📌 फॉर्म विवरण</th>
-                        <th class="py-3 px-4 text-left">📁 डॉक्यूमेंट्स (फाइलें)</th>
-                        <th class="py-3 px-4 text-left">⚡ स्टेटस बदलें</th>
+                        <th class="py-3 px-4 text-left font-semibold">🆔 ID & नाम</th>
+                        <th class="py-3 px-4 text-left font-semibold">📱 संपर्क व फॉर्म विवरण</th>
+                        <th class="py-3 px-4 text-left font-semibold">📄 डॉक्युमेंट्स</th>
+                        <th class="py-3 px-4 text-left font-semibold">⚙️ स्टेटस (Status)</th>
                     </tr>
                 </thead>
-                <tbody id="adminTableBody" class="divide-y divide-gray-200"></tbody>
+                <tbody id="adminTableBody" class="divide-y divide-gray-200">
+                    <!-- डेटा यहाँ आएगा -->
+                    <tr><td colspan="4" class="text-center py-8 text-indigo-600 font-semibold"><i class="fas fa-spinner fa-spin mr-2"></i> डेटा लोड हो रहा है...</td></tr>
+                </tbody>
             </table>
         </div>
     </div>
 
-    <div id="passModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white p-6 rounded-xl max-w-md w-full shadow-2xl">
-            <h3 class="text-lg font-bold text-indigo-900 mb-4"><i class="fas fa-key mr-2 text-amber-500"></i> पासवर्ड बदलें</h3>
-            <form onsubmit="changePassword(event)" class="space-y-4">
+    <!-- पासवर्ड बदलने का मोडल (Popup) -->
+    <div id="passModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-6 rounded-xl max-w-md w-full shadow-2xl relative">
+            <button onclick="closePassModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+            <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center"><i class="fas fa-key mr-2 text-amber-500"></i> पासवर्ड बदलें</h2>
+            <form id="changePasswordForm" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">पुराना पासवर्ड</label>
-                    <input type="password" id="oldPass" required class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">
+                    <input type="password" id="oldPass" required class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">नया पासवर्ड</label>
-                    <input type="password" id="changeNewPass" required class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">
+                    <input type="password" id="newPass" required class="w-full px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
-                <div class="flex space-x-3">
-                    <button type="submit" class="flex-1 bg-indigo-600 text-white font-bold py-2 rounded-lg shadow hover:bg-indigo-700 transition">अपडेट करें</button>
-                    <button type="button" onclick="closePassModal()" class="flex-1 bg-gray-200 text-gray-800 font-bold py-2 rounded-lg hover:bg-gray-300 transition">रद्द करें</button>
-                </div>
-                <div id="modalMsg" class="text-center text-sm font-medium mt-2"></div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition">अपडेट करें</button>
+                <div id="modalMsg" class="text-center mt-2 font-medium"></div>
             </form>
         </div>
     </div>
 
     <script>
-        function openPassModal() {
-            document.getElementById('passModal').classList.remove('hidden');
-        }
-        function closePassModal() {
-            document.getElementById('passModal').classList.add('hidden');
-            document.getElementById('modalMsg').innerText = '';
-        }
+        // 1. पासवर्ड मोडल खोलना/बंद करना
+        function openPassModal() { document.getElementById('passModal').classList.remove('hidden'); }
+        function closePassModal() { document.getElementById('passModal').classList.add('hidden'); document.getElementById('modalMsg').innerText = ''; }
 
-        async function changePassword(e) {
-            e.preventDefault();
-            const oldPassword = document.getElementById('oldPass').value;
-            const newPassword = document.getElementById('changeNewPass').value;
-            const msg = document.getElementById('modalMsg');
-
-            const res = await fetch('/api/admin/change-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ oldPassword, newPassword })
-            });
-            const data = await res.json();
-            if(res.ok) {
-                msg.className = "text-center text-green-600 text-sm font-medium mt-2";
-                msg.innerText = "✅ " + data.message;
-                setTimeout(() => { closePassModal(); }, 2000);
-            } else {
-                msg.className = "text-center text-red-500 text-sm font-medium mt-2";
-                msg.innerText = "❌ " + data.error;
-            }
-        }
-
+        // 2. लॉगआउट
         function logout() {
             localStorage.removeItem("isAdminLoggedIn");
-            window.location.href = "/admin-login.html";
+            window.location.href = "admin-login.html";
         }
 
-        async function loadApps() {
-            const res = await fetch('/api/admin/applications');
-            const data = await res.json();
-            const tbody = document.getElementById('adminTableBody');
-            tbody.innerHTML = '';
+        // 3. पासवर्ड बदलना (यहाँ लाइव URL सेट कर दिया गया है)
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const oldPassword = document.getElementById('oldPass').value;
+            const newPassword = document.getElementById('newPass').value;
+            const msg = document.getElementById('modalMsg');
+            msg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> अपडेट हो रहा है...';
             
-            if(data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-gray-500">कोई डेटा उपलब्ध नहीं है।</td></tr>`;
-                return;
-            }
-
-            data.forEach(app => {
-                let filesHtml = '';
-                if(app.doc_path) {
-                    const paths = app.doc_path.split(',');
-                    paths.forEach((p, index) => {
-                        filesHtml += `<a href="/${p}" target="_blank" class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-1 rounded font-medium text-xs inline-block m-0.5 transition">
-                            <i class="fas fa-file-download mr-1"></i> फाइल ${index + 1}
-                        </a> `;
-                    });
+            try {
+                const res = await fetch('https://hello-computer-point.onrender.com/api/admin/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ oldPassword, newPassword })
+                });
+                const data = await res.json();
+                if(res.ok) {
+                    msg.className = "text-center mt-2 font-medium text-green-600";
+                    msg.innerText = "✅ " + data.message;
+                    setTimeout(closePassModal, 2000);
+                } else {
+                    msg.className = "text-center mt-2 font-medium text-red-600";
+                    msg.innerText = "❌ " + data.error;
                 }
+            } catch(err) {
+                msg.className = "text-center mt-2 font-medium text-red-600";
+                msg.innerText = "❌ नेटवर्क एरर!";
+            }
+        });
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50 transition";
-                tr.innerHTML = `
-                    <td class="py-3 px-4 font-semibold text-gray-600">#${app.id}</td>
-                    <td class="py-3 px-4 font-medium text-gray-900">
-                        ${app.name}
-                        <div class="text-xs text-gray-500 mt-0.5"><b>क्वेरी:</b> ${app.query || 'कोई नहीं'}</div>
-                    </td>
-                    <td class="py-3 px-4 text-gray-600">${app.mobile}</td>
-                    <td class="py-3 px-4 text-indigo-600 font-medium">
-                        ${app.form_type}
-                        <div class="text-xs text-gray-500 font-normal mt-0.5">${app.description}</div>
-                    </td>
-                    <td class="py-3 px-4 max-w-xs">${filesHtml}</td>
-                    <td class="py-3 px-4">
-                        <select onchange="updateSt(${app.id}, this.value)" class="border border-gray-300 rounded-md p-1.5 text-xs font-semibold bg-white outline-none focus:ring-2 focus:ring-indigo-500">
-                            <option value="Pending" ${app.status === 'Pending' ? 'selected' : ''}>⏳ Pending</option>
-                            <option value="Processing" ${app.status === 'Processing' ? 'selected' : ''}>🔄 Processing</option>
-                            <option value="Completed" ${app.status === 'Completed' ? 'selected' : ''}>✅ Completed</option>
-                        </select>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+        // 4. डेटा लोड करना (यहाँ लाइव URL सेट कर दिया गया है)
+        async function loadApps() {
+            const tbody = document.getElementById('adminTableBody');
+            try {
+                const res = await fetch('https://hello-computer-point.onrender.com/api/admin/applications');
+                const data = await res.json();
+                tbody.innerHTML = '';
+                
+                if(data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-gray-500 font-medium">अभी तक कोई आवेदन नहीं आया है।</td></tr>';
+                    return;
+                }
+                
+                // नए फॉर्म सबसे ऊपर दिखाने के लिए डेटा को उल्टा (reverse) कर रहे हैं
+                data.reverse().forEach(app => {
+                    // फाइल देखने का बटन बनाना
+                    let filesHtml = '';
+                    if(app.doc_paths && app.doc_paths.length > 0) {
+                        app.doc_paths.forEach((path, index) => {
+                            filesHtml += `<a href="https://hello-computer-point.onrender.com/uploads/${path}" target="_blank" class="inline-block bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold mr-2 mb-2 shadow-sm transition"><i class="fas fa-eye mr-1"></i> फाइल ${index + 1}</a>`;
+                        });
+                    } else {
+                        filesHtml = '<span class="text-xs text-gray-400 font-medium">कोई फाइल नहीं</span>';
+                    }
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition border-b border-gray-100";
+                    tr.innerHTML = `
+                        <td class="py-4 px-4 align-top">
+                            <div class="font-bold text-gray-900 text-base">#${app.id} - ${app.name}</div>
+                            <div class="text-xs text-gray-500 mt-1"><i class="far fa-calendar-alt mr-1"></i> ${app.date || 'आज'}</div>
+                        </td>
+                        <td class="py-4 px-4 align-top">
+                            <div class="font-bold text-indigo-700 mb-1"><i class="fas fa-phone-alt text-xs mr-1"></i> ${app.mobile}</div>
+                            <div class="text-sm text-gray-700"><span class="font-semibold">फॉर्म:</span> ${app.form_type}</div>
+                            <div class="text-xs text-gray-600 mt-1"><span class="font-semibold">क्वेरी:</span> ${app.query || 'N/A'}</div>
+                            <div class="text-xs text-gray-600 mt-2 bg-gray-100 p-2 rounded-md border border-gray-200"><span class="font-semibold text-gray-800">विवरण:</span> ${app.description}</div>
+                        </td>
+                        <td class="py-4 px-4 align-top">
+                            ${filesHtml}
+                        </td>
+                        <td class="py-4 px-4 align-top">
+                            <select onchange="updateStatus(${app.id}, this.value)" class="border border-gray-300 rounded-lg p-2 text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer shadow-sm
+                                ${app.status === 'Completed' ? 'bg-green-100 text-green-800' : (app.status === 'Processing' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800')}">
+                                <option value="Pending" ${app.status === 'Pending' ? 'selected' : ''}>⏳ Pending (लंबित)</option>
+                                <option value="Processing" ${app.status === 'Processing' ? 'selected' : ''}>🔄 Processing (प्रोसेसिंग में)</option>
+                                <option value="Completed" ${app.status === 'Completed' ? 'selected' : ''}>✅ Completed (पूर्ण)</option>
+                            </select>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-red-500 font-bold">❌ सर्वर से डेटा लोड नहीं हो सका! (नेटवर्क एरर)</td></tr>';
+            }
         }
 
-        async function updateSt(id, status) {
-            await fetch('/api/admin/status', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, status })
-            });
-            alert('✨ स्टेटस सफलतापूर्वक अपडेट हो गया!');
+        // 5. स्टेटस अपडेट करना (यहाँ लाइव URL सेट कर दिया गया है)
+        async function updateStatus(id, status) {
+            try {
+                const res = await fetch('https://hello-computer-point.onrender.com/api/admin/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, status })
+                });
+                if(res.ok) {
+                    // स्टेटस बदलते ही पेज का डेटा तुरंत रिफ्रेश हो जाएगा
+                    loadApps(); 
+                } else {
+                    alert('स्टेटस अपडेट फेल हो गया!');
+                }
+            } catch (err) {
+                alert('सर्वर से कनेक्ट नहीं हो सका!');
+            }
         }
 
-        loadApps();
+        // पेज लोड होते ही डेटा मंगा लें
+        window.onload = loadApps;
     </script>
 </body>
 </html>
