@@ -11,7 +11,6 @@
         body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }
     </style>
     <script>
-        // चेक करें कि एडमिन लॉग इन है या नहीं
         if (localStorage.getItem("isAdminLoggedIn") !== "true") {
             window.location.href = "admin-login.html";
         }
@@ -21,7 +20,7 @@
     <div class="max-w-6xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b pb-4 gap-4">
             <h1 class="text-2xl md:text-3xl font-bold text-indigo-900 flex items-center">
-                <i class="fas fa-user-shield text-indigo-600 mr-3"></i> Admin Dashboard (एडमिन पैनल)
+                <i class="fas fa-user-shield text-indigo-600 mr-3"></i> Admin Dashboard
             </h1>
             <div class="flex space-x-3">
                 <button onclick="openPassModal()" class="bg-amber-100 text-amber-700 hover:bg-amber-200 px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm">
@@ -44,14 +43,13 @@
                     </tr>
                 </thead>
                 <tbody id="adminTableBody" class="divide-y divide-gray-200">
-                    <!-- डेटा यहाँ आएगा -->
                     <tr><td colspan="4" class="text-center py-8 text-indigo-600 font-semibold"><i class="fas fa-spinner fa-spin mr-2"></i> डेटा लोड हो रहा है...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- पासवर्ड बदलने का मोडल (Popup) -->
+    <!-- Password Modal -->
     <div id="passModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white p-6 rounded-xl max-w-md w-full shadow-2xl relative">
             <button onclick="closePassModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
@@ -72,17 +70,14 @@
     </div>
 
     <script>
-        // 1. पासवर्ड मोडल खोलना/बंद करना
         function openPassModal() { document.getElementById('passModal').classList.remove('hidden'); }
         function closePassModal() { document.getElementById('passModal').classList.add('hidden'); document.getElementById('modalMsg').innerText = ''; }
 
-        // 2. लॉगआउट
         function logout() {
             localStorage.removeItem("isAdminLoggedIn");
             window.location.href = "admin-login.html";
         }
 
-        // 3. पासवर्ड बदलना (यहाँ लाइव URL सेट कर दिया गया है)
         document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const oldPassword = document.getElementById('oldPass').value;
@@ -91,7 +86,7 @@
             msg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> अपडेट हो रहा है...';
             
             try {
-                const res = await fetch('https://hello-computer-point.onrender.com/api/admin/change-password', {
+                const res = await fetch('https://alok-computer-point-production.up.railway.app/api/admin/change-password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ oldPassword, newPassword })
@@ -111,11 +106,10 @@
             }
         });
 
-        // 4. डेटा लोड करना (यहाँ लाइव URL सेट कर दिया गया है)
         async function loadApps() {
             const tbody = document.getElementById('adminTableBody');
             try {
-                const res = await fetch('https://hello-computer-point.onrender.com/api/admin/applications');
+                const res = await fetch('https://alok-computer-point-production.up.railway.app/api/admin/applications');
                 const data = await res.json();
                 tbody.innerHTML = '';
                 
@@ -124,13 +118,11 @@
                     return;
                 }
                 
-                // नए फॉर्म सबसे ऊपर दिखाने के लिए डेटा को उल्टा (reverse) कर रहे हैं
                 data.reverse().forEach(app => {
-                    // फाइल देखने का बटन बनाना
                     let filesHtml = '';
                     if(app.doc_paths && app.doc_paths.length > 0) {
                         app.doc_paths.forEach((path, index) => {
-                            filesHtml += `<a href="https://hello-computer-point.onrender.com/uploads/${path}" target="_blank" class="inline-block bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold mr-2 mb-2 shadow-sm transition"><i class="fas fa-eye mr-1"></i> फाइल ${index + 1}</a>`;
+                            filesHtml += `<a href="https://alok-computer-point-production.up.railway.app/uploads/${path}" target="_blank" class="inline-block bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold mr-2 mb-2 shadow-sm transition"><i class="fas fa-eye mr-1"></i> फाइल ${index + 1}</a>`;
                         });
                     } else {
                         filesHtml = '<span class="text-xs text-gray-400 font-medium">कोई फाइल नहीं</span>';
@@ -168,16 +160,14 @@
             }
         }
 
-        // 5. स्टेटस अपडेट करना (यहाँ लाइव URL सेट कर दिया गया है)
         async function updateStatus(id, status) {
             try {
-                const res = await fetch('https://hello-computer-point.onrender.com/api/admin/status', {
+                const res = await fetch('https://alok-computer-point-production.up.railway.app/api/admin/status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id, status })
                 });
                 if(res.ok) {
-                    // स्टेटस बदलते ही पेज का डेटा तुरंत रिफ्रेश हो जाएगा
                     loadApps(); 
                 } else {
                     alert('स्टेटस अपडेट फेल हो गया!');
@@ -187,7 +177,6 @@
             }
         }
 
-        // पेज लोड होते ही डेटा मंगा लें
         window.onload = loadApps;
     </script>
 </body>
